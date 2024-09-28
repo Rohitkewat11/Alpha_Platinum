@@ -1,0 +1,32 @@
+/* CustomSwiper.css */
+
+/* Custom styles for the Swiper navigation buttons */
+.custom-prev,
+.custom-next {
+  background-color:#09a69b;
+  color: white;
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-100%);
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.custom-prev {
+  left: 10px;
+}
+
+.custom-next {
+  right: 10px;
+}
+/* Override default Swiper button visibility */
+.swiper-button-disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
