@@ -46,7 +46,7 @@ export function Home() {
             </button>
           </div>
         <div>
-          <img src="qrCode.jpg" alt="" className="w-32" />
+          <img src="./qrCode.jpg" alt="" className="w-32" />
         </div>
         </div>
       {/* app download section end */}
