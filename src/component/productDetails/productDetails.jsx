@@ -6,7 +6,7 @@ import { FaCartPlus } from "react-icons/fa6";
 import { FaHeart } from "react-icons/fa";
 import { FaStar } from "react-icons/fa";
 import { FaRegStar } from "react-icons/fa";
-import ReactImageMagnify from "react-image-magnify";
+// import ReactImageMagnify from "react-image-magnify";
 
 export function ProductDetails() {
   const location = useLocation();
@@ -59,7 +59,7 @@ export function ProductDetails() {
         <div className="grid grid-cols-2 mb-10">
           {/* img part */}
           <div className="flex justify-center">
-            <ReactImageMagnify
+            {/* <ReactImageMagnify
               {...{
                 smallImage: {
                   alt: "Magnified image",
@@ -78,7 +78,7 @@ export function ProductDetails() {
                   height: "250%",
                 },
               }}
-            />
+            /> */}
           </div>
 
           <div className="p-2">
