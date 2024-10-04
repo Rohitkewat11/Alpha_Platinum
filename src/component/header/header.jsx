@@ -6,6 +6,7 @@ import { VscThreeBars } from "react-icons/vsc";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Modal } from "./Modal";
+import swal from 'sweetalert';
 
 // mobile view menu icons//
 import { FaBoxOpen } from "react-icons/fa";
@@ -16,22 +17,49 @@ import { FaClockRotateLeft } from "react-icons/fa6";
 import { CgLogIn } from "react-icons/cg";
 import { FaInfo } from "react-icons/fa";
 import { TbMailFilled } from "react-icons/tb";
+import { IoPower } from "react-icons/io5";
 import { IoClose } from "react-icons/io5";
+import { useSelector } from "react-redux";
 
 export function Header() {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [category, setCategory] = useState([]);
+  const [products, setProducts] = useState();
+  const [filterDataOnSearch, setFilterDataOnSearch] = useState([]);
   const navigate = useNavigate();
+  const userData = JSON.parse(localStorage.getItem("user"));
 
   // State for Modal//
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
+  const cartCount = useSelector((state)=>state.data.cart.length); //getting cart length from store //
+  
 
   function handleTextClick(e) {
     const filterData = category.find((item) => item.id === e.target.id);
     navigate(`/category/${filterData.name}`, { state: filterData });
+  }
+
+  // function for handle search bar//
+  function handleSearchBox(e) {
+    const value = e.target.value.toLowerCase();
+    if (value !== "") {
+      const filter = products.filter((item) =>
+        item.name.toLowerCase().includes(value)
+      );
+      setFilterDataOnSearch(filter);
+    } else {
+      setFilterDataOnSearch([]);
+    }
+  }
+
+  // function for handle search product data//
+  async function handleSearchProductData(e) {
+    const id = e.target.id;
+    const findData = filterDataOnSearch.find((item) => item.id === id);
+    await navigate("PriceDetails", { state: findData });
+    setFilterDataOnSearch([]);
   }
 
   // fetching data from API
@@ -48,7 +76,15 @@ export function Header() {
         console.log(err);
       });
 
-      // fetching data from fakestore API data//
+    // fetching get_products API data//
+    axios
+      .post("https://alphasilver.productsalphawizz.com/app/v1/api/get_products")
+      .then((res) => {
+        setProducts(res.data.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
 
   return (
@@ -84,21 +120,44 @@ export function Header() {
                 <input
                   type="text"
                   placeholder="Search for products"
-                  className="w-[35em] bg-transparent "
+                  className="w-[35em] bg-transparent outline-none "
+                  onChange={handleSearchBox}
+                  // value={text}
                 />
                 <IoSearchSharp className="text-gray-300 text-2xl" />
               </div>
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <button
-              className="border border-[#49a6a2] text-[#49a6a2] rounded-md p-1 px-5 font-semibold"
-              onClick={openModal}
-            >
-              Login
-            </button>
-            <FaRegHeart className="text-[#49a6a2] text-xl hidden sm:hidden md:block lg:block xl:block " />
-            <FaCartPlus className="text-[#49a6a2] text-xl hidden sm:hidden md:block lg:block xl:block" />
+            {/* login user Data start */}
+            {userData ? (
+              <div>
+                <div className="flex items-center gap-2">
+                  <img
+                    src={userData.avatar_url}
+                    alt="userImg"
+                    className="h-10 w-10 rounded-full"
+                  />
+                  <span>{userData.display_name}</span>
+                  <IoPower title="logout" className="text-red-500 cursor-pointer" onClick={()=>{localStorage.removeItem('user');navigate('/')}}/>
+                </div>
+              </div>
+            ) : ( 
+              // login btn
+              <button
+                className="border border-[#49a6a2] text-[#49a6a2] rounded-md p-1 px-5 font-semibold"
+                onClick={openModal}
+              >
+                Login
+              </button>
+            )}
+            <button className="hidden sm:hidden md:block lg:block xl:block">
+            <FaRegHeart className="text-[#49a6a2] text-xl"/>
+            </button> {/* fevourite button */}
+            <button className="reletive hidden sm:hidden md:block lg:block xl:block" onClick={()=>{navigate('/cart')}}>
+            <FaCartPlus className="text-[#49a6a2] text-xl"/>
+            <div class="absolute inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full top-5 end-3 ">{cartCount}</div>
+            </button>     {/* cart button */}
           </div>
         </div>
         {/* addditional search box */}
@@ -108,9 +167,37 @@ export function Header() {
               type="text"
               placeholder="Search for products"
               className="w-full bg-transparent outline-none"
+              onChange={handleSearchBox}
+              // value={text}
             />
             <IoSearchSharp className="text-gray-300 text-2xl" />
           </div>
+        </div>
+        {/* display product based on search */}
+        <div className={filterDataOnSearch.length === 0 ? "hidden" : "block"}>
+          <ol className="border-2 rounded-md bg-white h-72 lg:h-96 overflow-y-scroll w-full lg:w-[39vw] absolute lg:left-48 z-50 ">
+            {filterDataOnSearch.map((item) => (
+              <li
+                key={item.id}
+                id={item.id}
+                className="flex gap-5 p-2 hover:bg-gray-200"
+              >
+                <figure className="border p-1">
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    id={item.id}
+                    className="h-20 w-20 cursor-pointer"
+                    onClick={handleSearchProductData}
+                  />
+                </figure>
+                <div>
+                  <p className="font-bold">{item.name}</p>
+                  <p className="text-gray-500">{item.category_name}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
         </div>
         {/* category list Bar */}
         <div className="hidden md:hidden lg:block xl:block">
@@ -190,7 +277,7 @@ export function Header() {
                 className="flex items-center space-x-5 p-5 border cursor-pointer hover:bg-gray-100"
               >
                 <FaBoxOpen className="text-[#49a6a2] text-xl" />
-                <span c>Products</span>
+                <span>Products</span>
               </li>
             </Link>
             <li
@@ -200,17 +287,19 @@ export function Header() {
               className="flex items-center space-x-5 p-5 border cursor-pointer hover:bg-gray-100"
             >
               <IoPersonCircle className="text-[#49a6a2] text-xl" />
-              <span c>My Account</span>
+              <span>My Account</span>
             </li>
+            <Link to='/cart'>
             <li
               onClick={() => {
                 setShowMobileMenu((showMobileMenu) => !showMobileMenu);
               }}
               className="flex items-center space-x-5 p-5 border cursor-pointer hover:bg-gray-100"
             >
-              <FaClockRotateLeft className="text-[#49a6a2] text-xl"/>
-              <sapn c>My Order</sapn>
+              <FaClockRotateLeft className="text-[#49a6a2] text-xl" />
+              <span>My Order</span>
             </li>
+            </Link>
             <li
               onClick={() => {
                 setShowMobileMenu((showMobileMenu) => !showMobileMenu);
@@ -218,7 +307,7 @@ export function Header() {
               className="flex items-center space-x-5 p-5 border cursor-pointer hover:bg-gray-100"
             >
               <FaRegHeart className="text-[#49a6a2] text-xl" />
-              <span c>Favorite</span>
+              <span>Favorite</span>
             </li>
             <li
               onClick={() => {
@@ -228,7 +317,7 @@ export function Header() {
               className="flex items-center space-x-5 p-5 border cursor-pointer hover:bg-gray-100"
             >
               <CgLogIn className="text-[#49a6a2] text-xl" />
-              <span c>Login</span>
+              <span>Login</span>
             </li>
             <li
               onClick={() => {
@@ -238,7 +327,7 @@ export function Header() {
               className="flex items-center space-x-5 p-5 border cursor-pointer hover:bg-gray-100"
             >
               <BsPersonCheckFill className="text-[#49a6a2] text-xl" />
-              <span >Register</span>
+              <span>Register</span>
             </li>
             <Link to="/about">
               <li
@@ -248,7 +337,7 @@ export function Header() {
                 className="flex items-center space-x-5 p-5 border cursor-pointer hover:bg-gray-100"
               >
                 <FaInfo className="text-[#49a6a2] text-xl" />
-                <span c>About Us</span>
+                <span>About Us</span>
               </li>
             </Link>
             <Link to="/contact">
@@ -259,13 +348,12 @@ export function Header() {
                 className="flex items-center space-x-5 p-5 border cursor-pointer hover:bg-gray-100"
               >
                 <TbMailFilled className="text-[#49a6a2] text-xl" />
-                <span c>Contact Us</span>
+                <span>Contact Us</span>
               </li>
             </Link>
           </ol>
         </div>
         {/* Mobile view Menu on hamburger click end*/}
-        
       </header>
     </>
   );

@@ -84,7 +84,7 @@ export function CategorySlider() {
         {
             category.map((item)=>
                  <div>
-                    <SwiperSlide className="grid">
+                    <SwiperSlide>
                     <img src={item.image} alt=""
                     id={item.id}
                     onClick={handleFinddata} className=" m-auto border-2 h-32 w-32 border-[#49a6a2] rounded-full cursor-pointer"/>

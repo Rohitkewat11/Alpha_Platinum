@@ -1,17 +1,38 @@
-
-import { useLocation,Link,useNavigate,} from "react-router-dom";
-import { useState,useEffect } from "react";
 import axios from "axios";
+import { useEffect, useState } from "react";
+import { useLocation,Link,useNavigate,} from "react-router-dom";
+
+
+
 
 export function CategoryWisePage(){
+    const [product,setProduct] = useState([]);
     const location = useLocation();
     const data =location.state||{};
     const navigate = useNavigate();    
 
     function handleImgClick(e){
-        const filterData = (data.children.find((item)=> item.id === e.target.id));
+        const filterData = (product.filter((item)=> item.category_id === e.target.id));
+        console.log(filterData);
+        
         navigate(`details`,{state:filterData});
     }
+
+    useEffect(()=>{
+         // fetching get_products API data//
+      axios
+      .post(
+        "https://alphasilver.productsalphawizz.com/app/v1/api/get_products"
+      )
+      .then((res) => {
+        setProduct(res.data.data);
+        
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    },[]);
+
 
     
     return(
@@ -28,7 +49,7 @@ export function CategoryWisePage(){
                 <div className="border-2 shadow-gray shadow-lg flex gap-8 p-4">
                     {
                         data.children.map((item)=>
-                        <div className="text-center">
+                        <div className="text-center" key={item.id}>
                             <img src={item.image} alt=""
                             id={item.id}
                             onClick={handleImgClick} 

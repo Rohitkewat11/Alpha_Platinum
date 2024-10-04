@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useState } from "react";
 import { IoMdCloseCircle } from "react-icons/io";
 import Login from "../login&Register/login";
 import { Register } from "../login&Register/register";

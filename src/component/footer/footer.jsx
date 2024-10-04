@@ -5,13 +5,12 @@ import { FaFacebookF } from "react-icons/fa6";
 import { FaGooglePlay } from "react-icons/fa";
 import { FaApple } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import './footer.css';
 
 export function Footer() {
   return (
     <>
-      <footer className="pt-10 pb-10">
-        <div className="p-3 md:w-[90%] md:m-auto gap-5 md:flex md:justify-evenly md:items-center lg:flex xl:flex">
+      <footer className="bg-[#1f2136] pt-10 pb-10">
+        <div className="md:w-[90%] md:m-auto gap-10 md:flex md:justify-evenly md:items-center lg:flex xl:flex">
           <div className="flex justify-center">
             <img
               src="./alphaPlatinumLogo.png"
@@ -19,11 +18,11 @@ export function Footer() {
               className="h-20"
             />
           </div>
-          <div className="mt-5">
+          <div className="ps-5 mt-5">
             <p className="text-2xl text-white font-bold">Get to know Us</p>
             <p className="border-b-2 border-[#0cfef2] w-14 h-3"></p>
             <div>
-              <div className="text-gray-400 mt-4 font-semibold flex space-x-20">
+              <div className="text-gray-400 mt-3 font-semibold flex space-x-20">
                 <ul>
                   <Link to="/">
                     <li
@@ -45,7 +44,6 @@ export function Footer() {
                       Products
                     </li>
                   </Link>
-                  <li className="hover:text-white">Register</li>
                   <Link to="/contact">
                     <li
                       className="hover:text-white"
@@ -79,7 +77,6 @@ export function Footer() {
                       Category
                     </li>
                   </Link>
-                  <li className="hover:text-white">Login</li>
                   <Link to="/about">
                     <li
                       className="hover:text-white"
@@ -105,23 +102,33 @@ export function Footer() {
               </div>
             </div>
           </div>
-          <div className="mt-3">
-            <p className="text-white font-bold">Connects with US</p>
+          <div className="ps-5 mt-5">
+            <p className="text-white  font-bold">Connects with US</p>
             <div className="mt-3 flex gap-3 text-white ">
-              <div className="cursor-pointer h-8 w-8 flex justify-center items-center bg-blue-700 rounded-full hover:scale-[1.1] duration-100 ease-in-out" title="Fecebook">
+              <div
+                className="cursor-pointer h-8 w-8 flex justify-center items-center bg-blue-700 rounded-full hover:scale-[1.1] duration-100 ease-in-out"
+                title="Fecebook"
+              >
                 <FaFacebookF />
               </div>
-              <div className="cursor-pointer h-8 w-8  flex justify-center items-center bg-blue-500 rounded-full hover:scale-[1.1] duration-100 ease-in-out" title="Twitter">
+              <div
+                className="cursor-pointer h-8 w-8  flex justify-center items-center bg-blue-500 rounded-full hover:scale-[1.1] duration-100 ease-in-out"
+                title="Twitter"
+              >
                 <FaTwitter />
               </div>
               <div
                 className="cursor-pointer h-8 w-8  flex justify-center items-center
               bg-gradient-to-tr from-yellow-500 via-purple-500 to-pink-700
-              rounded-full hover:scale-[1.1] duration-100 ease-in-out" title="Instagram"
+              rounded-full hover:scale-[1.1] duration-100 ease-in-out"
+                title="Instagram"
               >
                 <FaInstagram />
               </div>
-              <div className="cursor-pointer h-8 w-8 flex justify-center items-center bg-red-700 rounded-full hover:scale-[1.1] duration-100 ease-in-out" title="Youtube">
+              <div
+                className="cursor-pointer h-8 w-8 flex justify-center items-center bg-red-700 rounded-full hover:scale-[1.1] duration-100 ease-in-out"
+                title="Youtube"
+              >
                 <FaYoutube />
               </div>
             </div>

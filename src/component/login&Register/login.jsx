@@ -1,30 +1,38 @@
 import axios from "axios";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
+
+  const navigate = useNavigate();
+
   const validation = Yup.object({
-    mobile: Yup.string().required("Please enter mobile"),
+    email: Yup.string().required("Please enter email"),
     password: Yup.string().required("please enter password").min(4).max(8),
   });
 
   const formik = useFormik({
     initialValues: {
-      mobile: "",
+      email: "",
       password: "",
+      device_name:"1",
     },
     validationSchema: validation,
     onSubmit: (data, action) => {
       console.table(data);
-    //   axios
-    //     .post("https://hellostay.com/api/auth/login", data)
-    //     .then((res) => {
-    //       console.log(res.data);
-    //     })
-    //     .catch((err) => {
-    //       console.log(err.message);
-    //     });
+      axios
+        .post("https://hellostay.com/api/auth/login", data)
+        .then((res) => {
+          const userData= res.data.user;
+          localStorage.setItem("user", JSON.stringify(userData));
+          navigate(0);
+        })
+        .catch((err) => {
+          console.log(err.message);
+        });
       action.resetForm();
+      
     },
   });
 
@@ -37,15 +45,15 @@ function Login() {
               <input
                 onChange={formik.handleChange}
                 value={formik.values.name}
-                name="mobile"
+                name="email"
                 className="w-full p-2 border-2 rounded-md mt-2 outline-none"
                 type="text"
-                placeholder="Mobile Number"
+                placeholder="E-mail"
               />
               {/* {formik.errors.mobile && formik.touched.mobile ? (
               <p className="text-red-500">{formik.errors.mobile}</p>
               ) : null} */}
-              <p className="text-red-500">{formik.errors.mobile}</p>
+              <p className="text-red-500">{formik.errors.email}</p>
               <input
                 onChange={formik.handleChange}
                 value={formik.values.password}

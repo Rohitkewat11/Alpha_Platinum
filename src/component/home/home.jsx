@@ -52,35 +52,35 @@ export function Home() {
       {/* app download section end */}
 
       {/* support and return section start */}
-      <div className="bg-[#49a6a2] h-72 grid place-items-center md:grid-cols-2 lg:flex lg:justify-around lg:px-5">
+      <div className="bg-[#49a6a2] h-fit py-10 grid place-items-center md:grid-cols-2 lg:flex lg:justify-around lg:px-5">
         <div className="w-96 lg:w-fit  flex items-center gap-10 text-white">
-          <FaShippingFast className="text-5xl" />
+          <FaShippingFast className="text-4xl" />
           <div>
-            <p className="text-xl font-bold">Fast Shiping</p>
-            <p className="font-semibold">Fast Shiping at your door steps.</p>
+            <p className="text-lg font-semibold">Fast Shiping</p>
+            <p className="">Fast Shiping at your door steps.</p>
           </div>
         </div>
         <div className="w-96 lg:w-fit  flex items-center gap-10 text-white">
-          <FiRefreshCcw className="text-5xl" />
+          <FiRefreshCcw className="text-4xl" />
           <div>
-            <p className="text-xl font-bold">Free Returns</p>
-            <p className="font-semibold">
+            <p className="text-lg font-semibold">Free Returns</p>
+            <p className="">
               Free return if products are damaged.
             </p>
           </div>
         </div>
         <div className="w-96 lg:w-fit  flex items-center gap-10 text-white">
-          <SlEarphonesAlt className="text-5xl" />
+          <SlEarphonesAlt className="text-4xl" />
           <div>
-            <p className="text-xl font-bold">Support 27/7</p>
-            <p className="font-semibold">
+            <p className="text-lg font-semibold">Support 27/7</p>
+            <p className="">
               24/7 and 365 days support is available.
             </p>
           </div>
         </div>
         <div className="w-96 lg:w-fit  flex items-center gap-10 text-white">
-          <FaArrowRight className="text-5xl" />
-          <p className="text-xl font-bold">Seller Login</p>
+          <FaArrowRight className="text-4xl" />
+          <p className="text-lg font-semibold">Seller Login</p>
         </div>
       </div>
       {/* supprot and return section end */}

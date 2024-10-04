@@ -10,35 +10,60 @@ import "swiper/css/pagination";
 // import requried moudles
 import { Navigation } from "swiper/modules";
 import { SwiperSlide, Swiper } from "swiper/react";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setCartData } from "../redux/Slicer.js";
 
+//display fake store API data//
 export function ProductImageSlider() {
-  const [data, setData] = useState([]);
-  const [categoryProduct, setCategoryProduct] = useState([]);
+  const [allProduct, setAllProduct] = useState([[], [], []]);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const allProductData = allProduct.flat(); //combine all array//
+    
+
+  //function for handle Add to cart button//
+  function handleAddToCartBtn(e) {
+    const id = e.target.id;
+    let temp = [];
+    allProduct.map((item) => {
+      item.map((val) => {
+        temp.push(val);
+      });
+    });
+
+    if (localStorage.getItem("user") === null) {
+      alert("please login first");
+    } else {
+      const findData = temp.find((item) => item.id === id);
+      findData.count = 1;
+      dispatch(setCartData(findData));
+    }
+  }
+
+  // funciton for handle img click send data to productPriceDetails page//
+  function handleImgClick(e) {
+    const filterData = (allProductData.find((item) => item.id === e.target.id));
+    navigate('/PriceDetails',{state:filterData});
+  }
+
+
+  // for All product//
   useEffect(() => {
-    // getting limited product from API//
+    const temp = [];
     axios
-      .get("https://fakestoreapi.com/products?limit=10")
+      .post("https://alphasilver.productsalphawizz.com/app/v1/api/get_sections")
       .then((res) => {
-        setData(res.data);
+        res.data.data.map(
+          (item) => temp.push(item.product_details),
+          setAllProduct(temp)
+        );
       })
       .catch((err) => {
         console.log(err);
       });
   }, []);
 
-  useEffect(()=>{
-    // getting only category wise product form API
-    axios
-      .get(
-        "https://fakestoreapi.com/products/category/women's%20clothing?limit=5"
-      )
-      .then((res) => {
-        setCategoryProduct(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  },[]);
   return (
     <>
       <div className="w-[90%] m-auto flex justify-between">
@@ -47,7 +72,9 @@ export function ProductImageSlider() {
           <p className="text-gray-400 font-semibold">special</p>
         </div>
         <div>
-          <p className="text-[#09a69b] font-semibold">View More</p>
+          <Link to="/products">
+            <p className="text-[#09a69b] font-semibold">View More</p>
+          </Link>
         </div>
       </div>
       <div className="border-b-2 border-gray-200 mb-10">
@@ -74,44 +101,51 @@ export function ProductImageSlider() {
             modules={[Navigation]}
             className="mySwiper"
           >
-            {data.map((item) => (
-              <div>
-                <SwiperSlide className="">
-                  <div className="flex justify-center m-auto w-44">
-                    <div className="border rounded-md py-4 px-4 relative h-[100%]">
-                      <span className="absolute left-0 px-1 bg-[#27cfc4e4] rounded-r text-white">
-                        5% OFF
-                      </span>
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        id={item.id}
-                        className="cursor-pointer w-48 h-32 m-auto"
-                      />
-                      <div className="hover:-translate-y-2 duration-200 ease-in-out">
-                        <p className="text-center">{item.title}</p>
-                        <p className="text-center font-semibold">
-                          &#8377;{item.price}
-                        </p>
-                        <button className="flex items-center  gap-1 bg-[#09a69b] p-1 rounded-md m-auto text-white">
-                          <FaCartPlus />
-                          Add to cart
-                        </button>
+            {allProduct[0].map(
+              (item) => (
+                (
+                  <div>
+                    <SwiperSlide className="">
+                      <div className="border rounded-md py-4 px-4 relative h-[100%] m-auto w-44">
+                        <span className="absolute left-0 px-1 bg-[#27cfc4e4] rounded-r text-white">
+                          10% OFF
+                        </span>
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          id={item.id}
+                          onClick={handleImgClick}
+                          className="cursor-pointer w-48 h-36 m-auto"
+                        />
+                        <div className="hover:-translate-y-2 duration-200 ease-in-out">
+                          <p className="text-center">{item.name}</p>
+                          <p className="text-center font-semibold">
+                            &#8377;&nbsp;{item.min_max_price.min_price}
+                          </p>
+                          <button
+                            className="flex items-center  gap-1 bg-[#09a69b] p-1 rounded-md m-auto text-white active:scale-75 duration-150 ease-in-out"
+                            onClick={handleAddToCartBtn}
+                            id={item.id}
+                          >
+                            <FaCartPlus />
+                            Add to cart
+                          </button>
+                        </div>
                       </div>
-                    </div>
+                    </SwiperSlide>
                   </div>
-                </SwiperSlide>
-              </div>
-            ))}
+                )
+              )
+            )}
           </Swiper>
         </div>
       </div>
 
-      {/* fetching data from categoryProduct state */}
+      {/* fetching data index 2 products */}
 
-      <div className="mb-5 grid grid-cols-2 gap-2 lg:grid lg:grid-cols-4 xl:flex xl:gap-0 xl:h-80">
-        {categoryProduct.map((item) => (
-          <div className="border h-[100%]  w-fit md:w-60 md:m-auto lg:w-60 rounded-md py-4 px-2 relative">
+      <div className="mb-5 grid grid-cols-2 lg:grid px-3 lg:grid-cols-4 xl:flex xl:gap-2">
+        {allProduct[1].slice(0, 5).map((item) => (
+          <div className="border h-[100%] w-56 md:w-60 md:m-auto lg:w-60 rounded-md py-4 px-2 relative">
             <span className="absolute left-0 px-1 bg-[#27cfc4e4] rounded-r text-white">
               5% OFF
             </span>
@@ -119,12 +153,17 @@ export function ProductImageSlider() {
               src={item.image}
               alt=""
               id={item.id}
+              onClick={handleImgClick}
               className="cursor-pointer w-36 h-36 m-auto"
             />
             <div className="hover:-translate-y-2 duration-200 ease-in-out">
-              <p className="text-center">{item.title}</p>
-              <p className="text-center font-semibold">&#8377;{item.price}</p>
-              <button className="flex items-center  gap-1 bg-[#09a69b] p-1 rounded-md m-auto text-white">
+              <p className="text-center">{item.name}</p>
+              <p className="text-center font-semibold">
+                &#8377;&nbsp;{item.min_max_price.min_price}
+              </p>
+              <button className="flex items-center gap-1 bg-[#09a69b] p-1 rounded-md m-auto text-white active:scale-75 duration-150 ease-in-out"
+              onClick={handleAddToCartBtn}
+              id={item.id}>
                 <FaCartPlus />
                 Add to cart
               </button>
@@ -132,12 +171,56 @@ export function ProductImageSlider() {
           </div>
         ))}
         {/* offer container */}
-        <div className="border w-60 md:w-60 md:m-auto lg:w-60 h-[100%] rounded-md py-4 px-2 relative grid place-items-center">
+        <div className="border w-56 h-58 rounded-md py-4 px-2 relative grid place-items-center">
           <div>
-          <p className="font-semibold text-xl">Offer</p>
-          <p className="font-semibold text-gray-400">Special offer</p>
-          <p className="text-[#09a69b] font-semibold">View More</p>
+            <p className="font-semibold text-xl">Offer</p>
+            <p className="font-semibold text-gray-400">Special offer</p>
+            <p className="text-[#09a69b] font-semibold">View More</p>
           </div>
+        </div>
+      </div>
+      <hr />
+      {/* fetching data index 3 products */}
+      <div className="w-[90%] m-auto my-5">
+        <div className="flex justify-between">
+          <div>
+            <p className="text-xl font-bold">New Product</p>
+            <p className="text-gray-400 font-semibold">special</p>
+          </div>
+          <div>
+            <Link to="/products">
+              <p className="text-[#09a69b] font-semibold">View More</p>
+            </Link>
+          </div>
+        </div>
+
+        <div className="my-5 px-3 ">
+          {allProduct[2].map((item) => (
+            <div className="border h-[100%] w-56 md:w-60 lg:w-60 rounded-md py-4 px-2 relative">
+              <span className="absolute left-0 px-1 bg-[#27cfc4e4] rounded-r text-white">
+                5% OFF
+              </span>
+              <img
+                src={item.image}
+                alt=""
+                id={item.id}
+                onClick={handleImgClick}
+                className="cursor-pointer w-36 h-36 m-auto"
+              />
+              <div className="hover:-translate-y-2 duration-200 ease-in-out">
+                <p className="text-center">{item.name}</p>
+                <p className="text-center font-semibold">
+                  &#8377;&nbsp;{item.min_max_price.min_price}
+                </p>
+                <button className="flex items-center gap-1 bg-[#09a69b] p-1 rounded-md m-auto text-white active:scale-75 duration-150 ease-in-out"
+                id={item.id}
+                onClick={handleAddToCartBtn}>
+                  <FaCartPlus />
+                  Add to cart
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </>

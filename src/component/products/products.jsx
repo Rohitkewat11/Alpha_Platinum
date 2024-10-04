@@ -1,52 +1,52 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { setCartData } from "../../redux/Slicer";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaPlus } from "react-icons/fa";
-import { FaAngleDoubleRight } from "react-icons/fa";
-import { FaAngleDoubleLeft } from "react-icons/fa";
 
 export function Products() {
   const [products, setProducts] = useState([]);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  // funciton for handle category//
-  const handleCategoryChange = (e) => {
-    if (e.target.value === "ALL") {
-      axios
-        .get("https://fakestoreapi.com/products")
-        .then((res) => {
-          setProducts(res.data);
-        })
-        .catch((err) => {
-          console.log(err.message);
-        });
-    }else{
-        axios
-        .get(`https://fakestoreapi.com/products/category/${e.target.value}`)
-        .then((res) => {
-          setProducts(res.data);
-        })
-        .catch((err) => {
-          console.log(err.message);
-        });
-    }
-  };
 
-    // function for handle pagination//
-    const handlePagination = (e)=>{
-        const number = e.target.value;
-        // setProducts(products.splice(number*5,0));
+
+  // funciton for handle img click send data to productPriceDetails page//
+  function handleImgClick(e) {
+    const filterData = (products.find((item) => item.id === e.target.id));
+    navigate('/PriceDetails',{state:filterData});
+  }
+  
+
+  //function for handle Add to cart button//
+  function handleAddToCartBtn(e) {
+    const id = e.target.id;
+    if (localStorage.getItem("user") === null) {
+      alert("please login first");
+    } else {
+      const findData = products.find((item) => item.id === id);
+      findData.count = 1;
+      dispatch(setCartData(findData));
     }
+  }
+
+
 
   useEffect(() => {
+    const data = [];
     axios
-      .get("https://fakestoreapi.com/products")
+      .post("https://alphasilver.productsalphawizz.com/app/v1/api/get_sections")
       .then((res) => {
-        const temp = res.data;
-        setProducts(temp.splice(15,5));
-
+        res.data.data.map((item) => 
+          item.product_details.map((val) => 
+            data.push(val),
+            setProducts(data),
+          )
+        );
       })
       .catch((err) => {
-        console.log(err.message);
+        console.log(err);
       });
   }, []);
   return (
@@ -64,7 +64,6 @@ export function Products() {
           <h3 className="text-xl font-semibold underline">Category:-</h3>
           <select
             className="border-2 rounded-md w-full p-2 mt-3 outline-none"
-            onChange={handleCategoryChange}
           >
             <option value="ALL">ALL</option>
             <option value="electronics">Electronics</option>
@@ -74,26 +73,13 @@ export function Products() {
           </select>
         </div>
         <div className="">
-            {/* pagination section start */}
-            <div>
-                <div className="flex gap-1 justify-center">
-        <button className="bg-[#49a6a2] h-8 w-8 rounded-full text-white border text-md"><FaAngleDoubleLeft className="m-auto"/></button>
-                    <button value={0} onClick={handlePagination} className="bg-[#49a6a2] h-8 w-8 rounded-full  text-white border text-md">1</button>
-                    <button value={1} onClick={handlePagination} className="bg-[#49a6a2] h-8 w-8 rounded-full  text-white border text-md">2</button>
-                    <button value={2} onClick={handlePagination} className="bg-[#49a6a2] h-8 w-8 rounded-full  text-white border text-md">3</button>
-                    <button value={4} onClick={handlePagination} className="bg-[#49a6a2] h-8 w-8 rounded-full  text-white border text-md">4</button>
-                    <button onClick={handlePagination} className="bg-[#49a6a2] h-8 w-8 rounded-full  text-white border text-md"><FaAngleDoubleRight className="m-auto"/></button>
-                </div>
-            </div>
-            {/* pagination section end */}
-            
-          <div className="flex flex-wrap justify-center p-1">
+          <div className="flex justify-center lg:justify-normal gap-5 flex-wrap p-1">
             {products.map((item) => (
-              <div
-                key={item.id}
-                className="flex justify-center m-auto w-48 mt-2"
-              >
-                <div className="border rounded-md py-4 px-4 relative h-[100%]">
+              // <div
+              //   key={item.id}
+              //   className="flex m-auto w-48 mt-2"
+              // >
+                <div key={item.id} className="border rounded-md py-4 px-4 relative h-[100%]">
                   <span className="absolute left-0 px-1 bg-[#27cfc4e4] rounded-r text-white">
                     5% OFF
                   </span>
@@ -101,14 +87,17 @@ export function Products() {
                     src={item.image}
                     alt={item.name}
                     id={item.id}
-                    className="cursor-pointer w-52 h-32 m-auto"
+                    onClick={handleImgClick}
+                    className="cursor-pointer w-52 h-52 m-auto"
                   />
                   <div className="hover:-translate-y-2 duration-200 ease-in-out">
-                    <p className="text-center">{(item.title).substr(0,10)}</p>
+                    <p className="text-center">{item.name}</p>
                     <p className="text-center font-semibold">
-                      &#8377;{item.price}
+                      &#8377;{item.min_max_price.min_price}
                     </p>
-                    <button className="flex items-center  gap-1 bg-[#09a69b] p-1 rounded-md m-auto text-white">
+                    <button className="flex items-center  gap-1 bg-[#09a69b] p-1 rounded-md m-auto text-white active:scale-75 duration-150 ease-in-out" 
+                    onClick={handleAddToCartBtn}
+                    id={item.id}>
                       Add to cart
                       <sup>
                         <FaPlus />
@@ -116,7 +105,7 @@ export function Products() {
                     </button>
                   </div>
                 </div>
-              </div>
+              // </div>
             ))}
           </div>
         </div>
