@@ -12,7 +12,6 @@ import { ProductImageSlider } from "../productImageSlider";
 export function Home() {
   return (
     <>
-    <Test/>
       <div>
         <Carousal />
         <CategorySlider />
