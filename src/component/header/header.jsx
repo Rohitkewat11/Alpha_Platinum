@@ -68,7 +68,7 @@ export function Header() {
     // fetching get_categories Api data//
     axios
       .post(
-        "https://alphasilver.productsalphawizz.com/app/v1/api/get_categories"
+        "https://alpha-platinum.vercel.app/api/get_categories"
       )
       .then((res) => {
         setCategory(res.data.data);
@@ -79,7 +79,7 @@ export function Header() {
 
     // fetching get_products API data//
     axios
-      .post("https://alphasilver.productsalphawizz.com/app/v1/api/get_products")
+      .post("https://alpha-platinum.vercel.app/api/get_products")
       .then((res) => {
         setProducts(res.data.data);
       })

@@ -35,7 +35,7 @@ export function Products() {
   useEffect(() => {
     const data = [];
     axios
-      .post("https://alphasilver.productsalphawizz.com/app/v1/api/get_sections")
+      .post("https://alpha-platinum.vercel.app/api/get_sections")
       .then((res) => {
         res.data.data.map((item) =>
           item.product_details.map((val) => data.push(val), setProducts(data))

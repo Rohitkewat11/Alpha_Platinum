@@ -22,7 +22,7 @@ export function CategoryWisePage(){
          // fetching get_products API data//
       axios
       .post(
-        "https://alphasilver.productsalphawizz.com/app/v1/api/get_products"
+        "https://alpha-platinum.vercel.app/api/get_products"
       )
       .then((res) => {
         setProduct(res.data.data);

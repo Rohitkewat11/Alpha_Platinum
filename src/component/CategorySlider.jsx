@@ -29,7 +29,7 @@ export function CategorySlider() {
   useEffect(() => {
     axios
       .post(
-        "https://alphasilver.productsalphawizz.com/app/v1/api/get_categories"
+        "https://alpha-platinum.vercel.app/api/get_categories"
       )
       .then((res) => {
         setCategory(res.data.data);
