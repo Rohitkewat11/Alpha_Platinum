@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { FaCartPlus } from "react-icons/fa6";
+// import react toastfy//
+import { toast} from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 //import swiper style
 import "swiper/css";
@@ -20,33 +23,29 @@ export function ProductImageSlider() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const allProductData = allProduct.flat(); //combine all array//
-    
 
   //function for handle Add to cart button//
   function handleAddToCartBtn(e) {
     const id = e.target.id;
     let temp = [];
-    allProduct.map((item) => {
-      item.map((val) => {
-        temp.push(val);
-      });
-    });
+    allProduct.map((item) => item.map((val) => temp.push(val)));
 
     if (localStorage.getItem("user") === null) {
-      alert("please login first");
-    } else {
+      toast.error("Please login!");
+      return;
+    }else{
       const findData = temp.find((item) => item.id === id);
-      findData.count = 1;
-      dispatch(setCartData(findData));
+      const productToAdd = { ...findData, count: 1 }; // Create a deep copy of the found item to avoid mutating any read-only object
+      dispatch(setCartData(productToAdd));
+      toast.success("Item added to cart");
     }
   }
 
   // funciton for handle img click send data to productPriceDetails page//
   function handleImgClick(e) {
-    const filterData = (allProductData.find((item) => item.id === e.target.id));
-    navigate('/PriceDetails',{state:filterData});
+    const filterData = allProductData.find((item) => item.id === e.target.id);
+    navigate("/PriceDetails", { state: filterData });
   }
-
 
   // for All product//
   useEffect(() => {
@@ -94,49 +93,45 @@ export function ProductImageSlider() {
               },
               1024: {
                 slidesPerView: 5,
-                spaceBetween: 10,
+                spaceBetween: 0,
               },
             }}
             navigation={true}
             modules={[Navigation]}
             className="mySwiper"
           >
-            {allProduct[0].map(
-              (item) => (
-                (
-                  <div>
-                    <SwiperSlide className="">
-                      <div className="border rounded-md py-4 px-4 relative h-[100%] m-auto w-44">
-                        <span className="absolute left-0 px-1 bg-[#27cfc4e4] rounded-r text-white">
-                          10% OFF
-                        </span>
-                        <img
-                          src={item.image}
-                          alt={item.name}
-                          id={item.id}
-                          onClick={handleImgClick}
-                          className="cursor-pointer w-48 h-36 m-auto"
-                        />
-                        <div className="hover:-translate-y-2 duration-200 ease-in-out">
-                          <p className="text-center">{item.name}</p>
-                          <p className="text-center font-semibold">
-                            &#8377;&nbsp;{item.min_max_price.min_price}
-                          </p>
-                          <button
-                            className="flex items-center  gap-1 bg-[#09a69b] p-1 rounded-md m-auto text-white active:scale-75 duration-150 ease-in-out"
-                            onClick={handleAddToCartBtn}
-                            id={item.id}
-                          >
-                            <FaCartPlus />
-                            Add to cart
-                          </button>
-                        </div>
-                      </div>
-                    </SwiperSlide>
+            {allProduct[0].map((item) => (
+              <div>
+                <SwiperSlide>
+                  <div className="border rounded-md relative h-[100%] m-auto w-56 p-2">
+                    <span className="absolute left-0 px-1 bg-[#27cfc4e4] rounded-r text-white">
+                      10% OFF
+                    </span>
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      id={item.id}
+                      onClick={handleImgClick}
+                      className="cursor-pointer w-48 h-48 m-auto"
+                    />
+                    <div className="bg-white hover:-translate-y-3 duration-200 ease-in-out group"  >
+                      <p className="text-center font-semibold group-hover:text-[#09a69b]">{item.name}</p>
+                      <p className="text-center font-semibold">
+                        &#8377;&nbsp;{item.min_max_price.min_price}
+                      </p>
+                      <button
+                        className="flex items-center border-2 border-[#09a69b]  gap-1 bg-[#09a69b] p-1 rounded-md m-auto text-white active:scale-75 duration-150 ease-in-out"
+                        onClick={handleAddToCartBtn}
+                        id={item.id}
+                      >
+                        <FaCartPlus />
+                        Add to cart
+                      </button>
+                    </div>
                   </div>
-                )
-              )
-            )}
+                </SwiperSlide>
+              </div>
+            ))}
           </Swiper>
         </div>
       </div>
@@ -156,14 +151,16 @@ export function ProductImageSlider() {
               onClick={handleImgClick}
               className="cursor-pointer w-36 h-36 m-auto"
             />
-            <div className="hover:-translate-y-2 duration-200 ease-in-out">
-              <p className="text-center">{item.name}</p>
+            <div className="bg-white hover:-translate-y-2 duration-200 ease-in-out group">
+              <p className="text-center font-semibold group-hover:text-[#09a69b]">{item.name}</p>
               <p className="text-center font-semibold">
                 &#8377;&nbsp;{item.min_max_price.min_price}
               </p>
-              <button className="flex items-center gap-1 bg-[#09a69b] p-1 rounded-md m-auto text-white active:scale-75 duration-150 ease-in-out"
-              onClick={handleAddToCartBtn}
-              id={item.id}>
+              <button
+                className="flex items-center gap-1 bg-[#09a69b] p-1 rounded-md m-auto text-white active:scale-75 duration-150 ease-in-out"
+                onClick={handleAddToCartBtn}
+                id={item.id}
+              >
                 <FaCartPlus />
                 Add to cart
               </button>
@@ -207,14 +204,16 @@ export function ProductImageSlider() {
                 onClick={handleImgClick}
                 className="cursor-pointer w-36 h-36 m-auto"
               />
-              <div className="hover:-translate-y-2 duration-200 ease-in-out">
-                <p className="text-center">{item.name}</p>
+              <div className="bg-white hover:-translate-y-2 duration-200 ease-in-out group">
+                <p className="text-center font-semibold group-hover:text-[#09a69b]">{item.name}</p>
                 <p className="text-center font-semibold">
                   &#8377;&nbsp;{item.min_max_price.min_price}
                 </p>
-                <button className="flex items-center gap-1 bg-[#09a69b] p-1 rounded-md m-auto text-white active:scale-75 duration-150 ease-in-out"
-                id={item.id}
-                onClick={handleAddToCartBtn}>
+                <button
+                  className="flex items-center gap-1 bg-[#09a69b] p-1 rounded-md m-auto text-white active:scale-75 duration-150 ease-in-out"
+                  id={item.id}
+                  onClick={handleAddToCartBtn}
+                >
                   <FaCartPlus />
                   Add to cart
                 </button>

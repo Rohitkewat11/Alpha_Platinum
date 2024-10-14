@@ -2,6 +2,10 @@ import axios from "axios";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
+import swal from 'sweetalert';
+
+
+
 
 function Login() {
 
@@ -25,6 +29,7 @@ function Login() {
         .post("https://hellostay.com/api/auth/login", data)
         .then((res) => {
           const userData= res.data.user;
+          swal("Login", "You clicked the button!", "success");
           localStorage.setItem("user", JSON.stringify(userData));
           navigate(0);
         })
@@ -36,8 +41,12 @@ function Login() {
     },
   });
 
+
+
+
   return (
     <>
+
       <div className="mt-3">
         <p className="text-2xl py-4 font-semibold">Login</p>
         <form onSubmit={formik.handleSubmit}>

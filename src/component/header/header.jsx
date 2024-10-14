@@ -6,7 +6,9 @@ import { VscThreeBars } from "react-icons/vsc";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Modal } from "./Modal";
-import swal from 'sweetalert';
+// import react toastfy//
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // mobile view menu icons//
 import { FaBoxOpen } from "react-icons/fa";
@@ -33,8 +35,7 @@ export function Header() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
-  const cartCount = useSelector((state)=>state.data.cart.length); //getting cart length from store //
-  
+  const cartCount = useSelector((state) => state.data.cart.length); //getting cart length from store //
 
   function handleTextClick(e) {
     const filterData = category.find((item) => item.id === e.target.id);
@@ -89,6 +90,19 @@ export function Header() {
 
   return (
     <>
+      {/* error Tostify */}
+      <ToastContainer
+        // limit={1}
+        position="top-right"
+        autoClose={1000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
       <Modal isOpen={isModalOpen} onClose={closeModal} />
       {/* import Modal component */}
       <header>
@@ -139,10 +153,18 @@ export function Header() {
                     className="h-10 w-10 rounded-full"
                   />
                   <span>{userData.display_name}</span>
-                  <IoPower title="logout" className="text-red-500 cursor-pointer" onClick={()=>{localStorage.removeItem('user');navigate('/')}}/>
+                  {/* logout Button */}
+                  <IoPower
+                    title="logout"
+                    className="text-red-500 cursor-pointer"
+                    onClick={() => {
+                      localStorage.removeItem("user");
+                      navigate("/");
+                    }}
+                  />
                 </div>
               </div>
-            ) : ( 
+            ) : (
               // login btn
               <button
                 className="border border-[#49a6a2] text-[#49a6a2] rounded-md p-1 px-5 font-semibold"
@@ -151,13 +173,27 @@ export function Header() {
                 Login
               </button>
             )}
+            {/* feveroit button */}
             <button className="hidden sm:hidden md:block lg:block xl:block">
-            <FaRegHeart className="text-[#49a6a2] text-xl"/>
-            </button> {/* fevourite button */}
-            <button className="reletive hidden sm:hidden md:block lg:block xl:block" onClick={()=>{navigate('/cart')}}>
-            <FaCartPlus className="text-[#49a6a2] text-xl"/>
-            <div class="absolute inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full top-5 end-3 ">{cartCount}</div>
-            </button>     {/* cart button */}
+              <FaRegHeart className="text-[#49a6a2] text-xl" />
+            </button>
+            {/* Cart button */}
+            <button
+              className="reletive hidden sm:hidden md:block lg:block xl:block"
+              onClick={() => {
+                if (localStorage.getItem("user") !== null) {
+                  navigate("/cart");
+                } else {
+                  toast.error("Please login!");
+                }
+              }}
+            >
+              <FaCartPlus className="text-[#49a6a2] text-xl" />
+              <div class="absolute inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full top-5 end-3 ">
+                {cartCount}
+              </div>
+            </button>{" "}
+            {/* cart button */}
           </div>
         </div>
         {/* addditional search box */}
@@ -289,16 +325,16 @@ export function Header() {
               <IoPersonCircle className="text-[#49a6a2] text-xl" />
               <span>My Account</span>
             </li>
-            <Link to='/cart'>
-            <li
-              onClick={() => {
-                setShowMobileMenu((showMobileMenu) => !showMobileMenu);
-              }}
-              className="flex items-center space-x-5 p-5 border cursor-pointer hover:bg-gray-100"
-            >
-              <FaClockRotateLeft className="text-[#49a6a2] text-xl" />
-              <span>My Order</span>
-            </li>
+            <Link to="/cart">
+              <li
+                onClick={() => {
+                  setShowMobileMenu((showMobileMenu) => !showMobileMenu);
+                }}
+                className="flex items-center space-x-5 p-5 border cursor-pointer hover:bg-gray-100"
+              >
+                <FaClockRotateLeft className="text-[#49a6a2] text-xl" />
+                <span>My Order</span>
+              </li>
             </Link>
             <li
               onClick={() => {

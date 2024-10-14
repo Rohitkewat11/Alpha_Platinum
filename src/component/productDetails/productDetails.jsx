@@ -1,8 +1,9 @@
-
 import { useDispatch } from "react-redux";
-import { useLocation, Link,useNavigate } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 import { setCartData } from "../../redux/Slicer";
-
+// import Tostify
+import { toast} from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export function ProductDetails() {
   const location = useLocation();
@@ -10,24 +11,23 @@ export function ProductDetails() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  console.log(data);
-  
   function handleImgClick(e) {
-    const filterData = (data.find((item) => item.id === e.target.id));
-    navigate('/PriceDetails',{state:filterData});
+    const filterData = data.find((item) => item.id === e.target.id);
+    navigate("/PriceDetails", { state: filterData });
   }
 
   //function for handle Add to cart button//
-  function handleAddToCartBtn(e){
-    if(localStorage.getItem("user") === null){
-      alert("please login first");
+  function handleAddToCartBtn(e) {
+    const id = e.target.id;
+    if (localStorage.getItem("user") === null) {
+      toast.error("Please login!");
+      return;
     }else{
-      const id = e.target.id;
-      const findData = data.find((item)=>item.id === id);
-      findData.count=2;
-      dispatch(setCartData(findData));
+      const findData = data.find((item) => item.id === id);
+      const productToAdd = { ...findData, count: 1 }; // Create a deep copy of the found item to avoid mutating any read-only object
+      dispatch(setCartData(productToAdd));
+      toast.success("Item added to cart");
     }
-    
   }
   return (
     <>
@@ -42,35 +42,36 @@ export function ProductDetails() {
           </div>
           <div className="w-[80%] m-auto border shadow-md p-10 mt-10 mb-10">
             <h4 className="text-2xl font-semibold mb-4">
-            {data[0].category_name}
+              {data[0].category_name}
             </h4>
             <div className="border-2 shadow-gray shadow-lg flex gap-8 p-4">
               {data.map((item) => (
                 <div className="border rounded-md py-4 px-4 relative h-[100%] m-auto w-44">
-                <span className="absolute left-0 px-1 bg-[#27cfc4e4] rounded-r text-white">
-                  10% OFF
-                </span>
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  id={item.id}
-                  className="cursor-pointer w-48 h-36 m-auto"
-                  onClick={handleImgClick}
-                />
-                <div className="hover:-translate-y-2 duration-200 ease-in-out">
-                  <p className="text-center">{item.name}</p>
-                  <p className="text-center font-semibold">
-                    &#8377;{item.min_max_price.special_price}
-                  </p>
-                  <button className="flex items-center  gap-1 bg-[#09a69b] p-1 rounded-md m-auto text-white active:scale-75 duration-150 ease-in-out" 
-                  onClick={handleAddToCartBtn}
-                  id={item.id}
-                  >
-                    {/* <FaCartPlus /> */}
-                    Add to cart
-                  </button>
+                  <span className="absolute left-0 px-1 bg-[#27cfc4e4] rounded-r text-white">
+                    10% OFF
+                  </span>
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    id={item.id}
+                    className="cursor-pointer w-48 h-36 m-auto"
+                    onClick={handleImgClick}
+                  />
+                  <div className="hover:-translate-y-2 duration-200 ease-in-out">
+                    <p className="text-center">{item.name}</p>
+                    <p className="text-center font-semibold">
+                      &#8377;{item.min_max_price.special_price}
+                    </p>
+                    <button
+                      className="flex items-center  gap-1 bg-[#09a69b] p-1 rounded-md m-auto text-white active:scale-75 duration-150 ease-in-out"
+                      onClick={handleAddToCartBtn}
+                      id={item.id}
+                    >
+                      {/* <FaCartPlus /> */}
+                      Add to cart
+                    </button>
+                  </div>
                 </div>
-              </div>
               ))}
             </div>
           </div>
