@@ -3,17 +3,20 @@ import axios from 'axios';
 import cors from 'cors';
 
 const app = express();
-const BASE_URL = 'https://alphasilver.productsalphawizz.com/app/v1/api';
 
 // Enable CORS and JSON parsing for incoming requests
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({extended:true}));
+const BASE_URL = 'https://alphasilver.productsalphawizz.com/app/v1/api';
 
 // Helper function to create API routes
 const createApiRoute = (endpoint) => {
   app.post(`/api/${endpoint}`, async (req, res) => {
     try {
       const response = await axios.post(`${BASE_URL}/${endpoint}`, req.body);
+      console.log(response);
+      
       res.json(response.data);
     } catch (error) {
       console.error(`Error fetching ${endpoint}:`, error);
