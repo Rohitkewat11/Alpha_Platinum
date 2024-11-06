@@ -12,6 +12,7 @@ import Term_Condition from './component/Terms&Condition/T&C';
 import PrivacyPolicy from './component/privacyPolicy/privacyPolicy';
 import ProductPriceDetails from './component/productDetails/productPriceDetails';
 import { Cart } from './component/Cart/Cart';
+import {Favorait} from './component/favoraitSection/favorait';
 
 
 
@@ -34,6 +35,7 @@ function App() {
         <Route path='/T&C' element={<Term_Condition/>}/>
         <Route path='/privacyPolicy' element={<PrivacyPolicy/>}/>
         <Route path='/cart' element={<Cart/>}/>
+        <Route path='/favorait' element={<Favorait/>}/>
         <Route path='*' element={<><h1>Path not found.</h1></>}/>
       </Routes>
 

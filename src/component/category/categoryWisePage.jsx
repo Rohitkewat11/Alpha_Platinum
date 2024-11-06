@@ -13,16 +13,16 @@ export function CategoryWisePage(){
 
     function handleImgClick(e){
         const filterData = (product.filter((item)=> item.category_id === e.target.id));
-        console.log(filterData);
-        
-        navigate(`details`,{state:filterData});
+        if(filterData.length !==0){
+            navigate(`details`,{state:filterData});
+        }
     }
 
     useEffect(()=>{
          // fetching get_products API data//
       axios
       .post(
-        "https://alpha-platinum.vercel.app/api/get_products"
+        "https://alphasilver.productsalphawizz.com/app/v1/api/get_products"
       )
       .then((res) => {
         setProduct(res.data.data);
@@ -46,7 +46,7 @@ export function CategoryWisePage(){
             </div>
             <div className="w-[80%] m-auto border shadow-md p-10 mt-10 mb-10">
                 <h4 className="text-2xl font-semibold mb-4">{data.name} Category</h4>
-                <div className="border-2 shadow-gray shadow-lg flex gap-8 p-4">
+                <div className="border-2 shadow-gray shadow-lg grid place-items-center sm:flex md:flex gap-8 p-4">
                     {
                         data.children.map((item)=>
                         <div className="text-center" key={item.id}>

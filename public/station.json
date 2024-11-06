@@ -1,0 +1,28 @@
+{
+    "station":[
+        {
+            "stationName":"katni",
+            "stationCode":"KTE"
+        },
+        {
+            "stationName":"saleemnabad",
+            "stationCode":"SBD"
+        },
+        {
+            "stationName":"dundi",
+            "stationCode":"DDCE"
+        },
+        {
+            "stationName":"Sihora",
+            "stationCode":"SHR"
+        },
+        {
+            "stationName":"gosalpur",
+            "stationCode":"GSPR"
+        },
+        {
+            "stationName":"jabalpur",
+            "stationCode":"JBP"
+        }
+    ]
+}

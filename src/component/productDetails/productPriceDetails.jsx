@@ -5,7 +5,7 @@ import { FiPlus } from "react-icons/fi";
 import { FaCartPlus } from "react-icons/fa6";
 import { FaHeart } from "react-icons/fa";
 import { useDispatch } from "react-redux";
-import { setCartData } from "../../redux/Slicer";
+import { setCartData } from "../../redux/cartItemDataSlicer";
 import { toast } from "react-toastify";
 
 const ProductPriceDetails = () => {

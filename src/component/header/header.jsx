@@ -22,20 +22,28 @@ import { TbMailFilled } from "react-icons/tb";
 import { IoPower } from "react-icons/io5";
 import { IoClose } from "react-icons/io5";
 import { useSelector } from "react-redux";
+import { Favorait } from "../favoraitSection/favorait";
 
 export function Header() {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const openHamburgerMenu = ()=> setShowMobileMenu(true);
+  const closeHamburgerMenu = ()=> setShowMobileMenu(false);
   const [category, setCategory] = useState([]);
   const [products, setProducts] = useState();
   const [filterDataOnSearch, setFilterDataOnSearch] = useState([]);
   const navigate = useNavigate();
   const userData = JSON.parse(localStorage.getItem("user"));
 
+  //state for favorait page//
+  const [showFavorait,setShowFavorait] = useState(false);
+  const openFev = ()=> setShowFavorait(true);
+  const closeFev = ()=> setShowFavorait(false);
+
   // State for Modal//
   const [isModalOpen, setIsModalOpen] = useState(false);
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
-  const cartCount = useSelector((state) => state.data.cart.length); //getting cart length from store //
+  const cartCount = useSelector((state) => state.cartData.cart.length); //getting cart length from store //
 
   function handleTextClick(e) {
     const filterData = category.find((item) => item.id === e.target.id);
@@ -68,7 +76,7 @@ export function Header() {
     // fetching get_categories Api data//
     axios
       .post(
-        "https://alpha-platinum.vercel.app/api/get_categories"
+        "https://alphasilver.productsalphawizz.com/app/v1/api/get_categories"
       )
       .then((res) => {
         setCategory(res.data.data);
@@ -79,17 +87,21 @@ export function Header() {
 
     // fetching get_products API data//
     axios
-      .post("https://alpha-platinum.vercel.app/api/get_products")
+      .post("https://alphasilver.productsalphawizz.com/app/v1/api/get_products")
       .then((res) => {
         setProducts(res.data.data);
       })
       .catch((err) => {
         console.log(err);
-      });
+      })
   }, []);
+
 
   return (
     <>
+      {/* favorait page */}
+        <Favorait openFev={showFavorait} closeFev={closeFev} />
+
       {/* error Tostify */}
       <ToastContainer
         // limit={1}
@@ -113,28 +125,28 @@ export function Header() {
               <IoClose
                 className="text-4xl cursor-pointer"
                 onClick={() => {
-                  setShowMobileMenu((showMobileMenu) => !showMobileMenu);
+                  openHamburgerMenu();
                 }}
               />
             ) : (
               <BsList
                 className="text-4xl cursor-pointer"
                 onClick={() => {
-                  setShowMobileMenu((showMobileMenu) => !showMobileMenu);
+                  openHamburgerMenu();
                 }}
               />
             )}
           </div>
           <div className="flex items-center gap-8">
             <Link to="/">
-              <img src="./alphaPlatinumLogo.png" alt="" className="h-14" />
+              <img src="./alphaPlatinumLogo.png" alt="logo" className="h-14" />
             </Link>
             <div className="hidden sm:hidden md:hidden lg:block xl:block">
               <div className="border border-gray-300 rounded-md p-2 flex items-center bg-gray-100">
                 <input
                   type="text"
                   placeholder="Search for products"
-                  className="w-[35em] bg-transparent outline-none "
+                  className="w-[35em] bg-transparent outline-none"
                   onChange={handleSearchBox}
                   // value={text}
                 />
@@ -174,12 +186,19 @@ export function Header() {
               </button>
             )}
             {/* feveroit button */}
-            <button className="hidden sm:hidden md:block lg:block xl:block">
-              <FaRegHeart className="text-[#49a6a2] text-xl" />
+            <button className="hidden sm:hidden md:block lg:block xl:block" title="Favorait" onClick={()=>{
+                if (localStorage.getItem("user") !== null) {
+                  openFev()
+                } else {
+                  toast.error("Please login!");
+                }
+              }}>
+              <FaRegHeart className="text-red-500 text-xl"/>
             </button>
             {/* Cart button */}
             <button
               className="reletive hidden sm:hidden md:block lg:block xl:block"
+              title="Cart"
               onClick={() => {
                 if (localStorage.getItem("user") !== null) {
                   navigate("/cart");
@@ -210,8 +229,8 @@ export function Header() {
           </div>
         </div>
         {/* display product based on search */}
-        <div className={filterDataOnSearch.length === 0 ? "hidden" : "block"}>
-          <ol className="border-2 rounded-md bg-white h-72 lg:h-96 overflow-y-scroll w-full lg:w-[39vw] absolute lg:left-48 z-50 ">
+        <div className={filterDataOnSearch.length === 0 ? "hidden" : "block"} >
+          <ol className={`${filterDataOnSearch.length > 2? "h-72": "h-auto"} border-2 rounded-md bg-white overflow-y-scroll w-full lg:w-[35vw] absolute lg:left-48 z-50 `}>
             {filterDataOnSearch.map((item) => (
               <li
                 key={item.id}
@@ -298,17 +317,24 @@ export function Header() {
         </div>
 
         {/* Mobile view Menu on hamburger click start*/}
-        <div
-          className="absolute top-0 right-0 h-full z-50 bg-white w-[50%] py-4 border shadow-md shadow-black rounded-r-md"
-          style={{
+       <div className="hamburger bg-[#464343ad] w-full h-full fixed top-0 right-0 z-50" style={{
             display: showMobileMenu ? "block" : "none",
+          }} 
+          onClick={(e) => {
+            if(e.target.classList.contains("hamburger")){
+              closeHamburgerMenu();
+            }
           }}
+          >
+       <div
+          className=" bg-white w-[70%] absolute inset-0 py-4 border shadow-md shadow-black rounded-r-md"
+          
         >
           <ol className="">
             <Link to="/products">
               <li
                 onClick={() => {
-                  setShowMobileMenu((showMobileMenu) => !showMobileMenu);
+                  closeHamburgerMenu();
                 }}
                 className="flex items-center space-x-5 p-5 border cursor-pointer hover:bg-gray-100"
               >
@@ -318,7 +344,7 @@ export function Header() {
             </Link>
             <li
               onClick={() => {
-                setShowMobileMenu((showMobileMenu) => !showMobileMenu);
+                closeHamburgerMenu();
               }}
               className="flex items-center space-x-5 p-5 border cursor-pointer hover:bg-gray-100"
             >
@@ -328,7 +354,7 @@ export function Header() {
             <Link to="/cart">
               <li
                 onClick={() => {
-                  setShowMobileMenu((showMobileMenu) => !showMobileMenu);
+                  closeHamburgerMenu();
                 }}
                 className="flex items-center space-x-5 p-5 border cursor-pointer hover:bg-gray-100"
               >
@@ -338,7 +364,7 @@ export function Header() {
             </Link>
             <li
               onClick={() => {
-                setShowMobileMenu((showMobileMenu) => !showMobileMenu);
+                closeHamburgerMenu();
               }}
               className="flex items-center space-x-5 p-5 border cursor-pointer hover:bg-gray-100"
             >
@@ -347,7 +373,7 @@ export function Header() {
             </li>
             <li
               onClick={() => {
-                setShowMobileMenu((showMobileMenu) => !showMobileMenu);
+                closeHamburgerMenu();
                 openModal();
               }}
               className="flex items-center space-x-5 p-5 border cursor-pointer hover:bg-gray-100"
@@ -357,7 +383,7 @@ export function Header() {
             </li>
             <li
               onClick={() => {
-                setShowMobileMenu((showMobileMenu) => !showMobileMenu);
+                closeHamburgerMenu();
                 openModal();
               }}
               className="flex items-center space-x-5 p-5 border cursor-pointer hover:bg-gray-100"
@@ -368,7 +394,7 @@ export function Header() {
             <Link to="/about">
               <li
                 onClick={() => {
-                  setShowMobileMenu((showMobileMenu) => !showMobileMenu);
+                  closeHamburgerMenu();
                 }}
                 className="flex items-center space-x-5 p-5 border cursor-pointer hover:bg-gray-100"
               >
@@ -379,7 +405,7 @@ export function Header() {
             <Link to="/contact">
               <li
                 onClick={() => {
-                  setShowMobileMenu((showMobileMenu) => !showMobileMenu);
+                  closeHamburgerMenu();
                 }}
                 className="flex items-center space-x-5 p-5 border cursor-pointer hover:bg-gray-100"
               >
@@ -389,6 +415,7 @@ export function Header() {
             </Link>
           </ol>
         </div>
+       </div>
         {/* Mobile view Menu on hamburger click end*/}
       </header>
     </>

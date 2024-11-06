@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   removeCartData,
   addCartItemCount,
   removeCartItemCount,
   clearCartItem,
-} from "../../redux/Slicer";
+} from "../../redux/cartItemDataSlicer";
 import { FaRegTrashAlt } from "react-icons/fa";
 
 export function Cart() {
-  let data = useSelector((state) => state.data.cart);
+  let data = useSelector((state) => state.cartData.cart);
   const dispatch = useDispatch();
   const [amount, setAmount] = useState(0);
   const [tax, setTax] = useState(0);
+  const navigate = useNavigate();
 
   // funtion for remove cart item//
   function handleRemoveCartItem(e) {
@@ -35,8 +36,12 @@ export function Cart() {
     dispatch(removeCartItemCount(countID));
   }
 
-  // function for total amount
+  // function for handle img click//
+    function handleImgClick(data){
+      navigate('/PriceDetails',{state:data})
+    }
 
+  // function for total amount
   useEffect(() => {
     const newAmount = data.reduce(
       (acc, item) => acc + item.min_max_price.min_price * item.count,
@@ -93,6 +98,7 @@ export function Cart() {
                         src={item.image}
                         className="h-20 w-20 m-auto"
                         alt=""
+                        onClick={()=>{handleImgClick(item)}}
                       />
                       <p>{item.name}</p>
                     </td>

@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { FaCartPlus } from "react-icons/fa6";
+import { FaRegHeart } from "react-icons/fa";
+import { FaHeart } from "react-icons/fa6";
 // import react toastfy//
 import { toast} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { setFavoraitdata,removeFavoraitData } from "../redux/favoraitItemData";
 
 //import swiper style
 import "swiper/css";
@@ -15,7 +18,7 @@ import { Navigation } from "swiper/modules";
 import { SwiperSlide, Swiper } from "swiper/react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setCartData } from "../redux/Slicer.js";
+import { setCartData } from "../redux/cartItemDataSlicer";
 
 //display fake store API data//
 export function ProductImageSlider() {
@@ -23,6 +26,7 @@ export function ProductImageSlider() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const allProductData = allProduct.flat(); //combine all array//
+  const [favoriteStatus, setFavoriteStatus] = useState(true); // Track favorite status
 
   //function for handle Add to cart button//
   function handleAddToCartBtn(e) {
@@ -41,6 +45,44 @@ export function ProductImageSlider() {
     }
   }
 
+  //function for handle Add to favorait button//
+  function handleAddTofavoraitBtn(e) {
+    const id = e.target.id;
+    
+    
+    if (localStorage.getItem("user") === null) {
+      toast.error("Please login!");
+      return;
+    }else{
+      const findData = allProductData.find((item) => item.id === id);
+      if(findData){
+        const productToAdd = { ...findData, count: 1, favoraitStatus:false };
+        dispatch(setFavoraitdata(productToAdd));
+        toast.success(`${productToAdd.name}saved to favorait`);
+        setFavoriteStatus((prevState) => ({
+          ...prevState,
+          [id]: !prevState[id], // Toggle the specific product's favorite status
+        }));
+      }
+    }
+  }
+
+  // toggle favorait status//
+  function handleFavoraitStatus(id) {
+    console.log(id);
+
+    // Toggle favorite status for the specific product
+
+    setFavoriteStatus((prevState) => ({
+      ...prevState,
+      [id]: !prevState[id], // Toggle the specific product's favorite status
+    }));
+    dispatch(removeFavoraitData(id));
+    toast.error("Item removed");
+  }
+
+
+
   // funciton for handle img click send data to productPriceDetails page//
   function handleImgClick(e) {
     const filterData = allProductData.find((item) => item.id === e.target.id);
@@ -51,7 +93,7 @@ export function ProductImageSlider() {
   useEffect(() => {
     const temp = [];
     axios
-      .post("https://alpha-platinum.vercel.app/api/get_sections")
+      .post("https://alphasilver.productsalphawizz.com/app/v1/api/get_sections")
       .then((res) => {
         res.data.data.map(
           (item) => temp.push(item.product_details),
@@ -104,9 +146,29 @@ export function ProductImageSlider() {
               <div>
                 <SwiperSlide>
                   <div className="border rounded-md relative h-[100%] m-auto w-56 p-2">
-                    <span className="absolute left-0 px-1 bg-[#27cfc4e4] rounded-r text-white">
-                      10% OFF
-                    </span>
+                  <div className="flex justify-between">
+                  <div className="-ms-4 px-1 bg-[#27cfc4e4] rounded-r text-white">
+                    10% OFF
+                  </div>
+                  <div>
+                    {/* favorait button */}
+                    {favoriteStatus[item.id] ? (
+                      <FaHeart
+                        id={item.id}
+                        className="text-xl cursor-pointer text-red-500"
+                        onClick={() => {
+                          handleFavoraitStatus(item.id);
+                        }}
+                      />
+                    ) : (
+                      <FaRegHeart
+                        onClick={handleAddTofavoraitBtn}
+                        id={item.id}
+                        className="text-gray-300 text-xl cursor-pointer hover:text-red-500"
+                      />
+                    )}
+                  </div>
+                </div>
                     <img
                       src={item.image}
                       alt={item.name}
@@ -141,9 +203,29 @@ export function ProductImageSlider() {
       <div className="mb-5 grid grid-cols-2 lg:grid px-3 lg:grid-cols-4 xl:flex xl:gap-2">
         {allProduct[1].slice(0, 5).map((item) => (
           <div className="border h-[100%] w-56 md:w-60 md:m-auto lg:w-60 rounded-md py-4 px-2 relative">
-            <span className="absolute left-0 px-1 bg-[#27cfc4e4] rounded-r text-white">
-              5% OFF
-            </span>
+            <div className="flex justify-between">
+                  <div className="-ms-4 px-1 bg-[#27cfc4e4] rounded-r text-white">
+                    5% OFF
+                  </div>
+                  <div>
+                    {/* favorait button */}
+                    {favoriteStatus[item.id] ? (
+                      <FaHeart
+                        id={item.id}
+                        className="text-xl cursor-pointer text-red-500"
+                        onClick={() => {
+                          handleFavoraitStatus(item.id);
+                        }}
+                      />
+                    ) : (
+                      <FaRegHeart
+                        onClick={handleAddTofavoraitBtn}
+                        id={item.id}
+                        className="text-gray-300 text-xl cursor-pointer hover:text-red-500"
+                      />
+                    )}
+                  </div>
+                </div>
             <img
               src={item.image}
               alt=""
@@ -194,9 +276,29 @@ export function ProductImageSlider() {
         <div className="my-5 px-3 ">
           {allProduct[2].map((item) => (
             <div className="border h-[100%] w-56 md:w-60 lg:w-60 rounded-md py-4 px-2 relative">
-              <span className="absolute left-0 px-1 bg-[#27cfc4e4] rounded-r text-white">
-                5% OFF
-              </span>
+              <div className="flex justify-between">
+                  <div className="-ms-4 px-1 bg-[#27cfc4e4] rounded-r text-white">
+                    5% OFF
+                  </div>
+                  <div>
+                    {/* favorait button */}
+                    {favoriteStatus[item.id] ? (
+                      <FaHeart
+                        id={item.id}
+                        className="text-xl cursor-pointer text-red-500"
+                        onClick={() => {
+                          handleFavoraitStatus(item.id);
+                        }}
+                      />
+                    ) : (
+                      <FaRegHeart
+                        onClick={handleAddTofavoraitBtn}
+                        id={item.id}
+                        className="text-gray-300 text-xl cursor-pointer hover:text-red-500"
+                      />
+                    )}
+                  </div>
+                </div>
               <img
                 src={item.image}
                 alt=""

@@ -1,29 +1,34 @@
-import { combineReducers,configureStore } from "@reduxjs/toolkit";
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
 
-import { persistStore,persistReducer } from "redux-persist";
+import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
-import cartReducer from './Slicer';
-
-// combined reducers
-const combineReducer = combineReducers({
-    data:cartReducer,   //first slicer
-});
+import cartReducer from "./cartItemDataSlicer";
+import favoraitReducer from "./favoraitItemData";
 
 //persist configuration
-const persistConfig = {
-    key:"root",          //key to save persisted state in storage
-    storage,
+const cartPersistConfig = {
+  key: "data", //key to save cart data in local storage
+  storage,
+};
+const favoraitPersistConfig = {
+  key: "favoraitData", // key to save favorait data in local storage
+  storage,
 };
 
 //create persisted reducer
-const persistReduce = persistReducer(persistConfig,combineReducer)
+const persistCartReduce = persistReducer(cartPersistConfig, cartReducer);
+const persistFavoraitreducer = persistReducer(favoraitPersistConfig,favoraitReducer);
 
+// combined reducers
+const combineReducer = combineReducers({
+  cartData: persistCartReduce, //cart slicer
+  favoraitData: persistFavoraitreducer, // favorait slicer
+});
 
 // create redux store
 export const store = configureStore({
-    reducer:persistReduce,
+  reducer: combineReducer,
 });
-
 
 // create the persistor
 export const persistor = persistStore(store);

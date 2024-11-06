@@ -1,6 +1,6 @@
 import { useDispatch } from "react-redux";
 import { useLocation, Link, useNavigate } from "react-router-dom";
-import { setCartData } from "../../redux/Slicer";
+import { setCartData } from "../../redux/cartItemDataSlicer";
 // import Tostify
 import { toast} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -44,7 +44,7 @@ export function ProductDetails() {
             <h4 className="text-2xl font-semibold mb-4">
               {data[0].category_name}
             </h4>
-            <div className="border-2 shadow-gray shadow-lg flex gap-8 p-4">
+            <div className="border-2 shadow-gray shadow-lg grid sm:flex sm:flex-wrap md:flex gap-8 p-4">
               {data.map((item) => (
                 <div className="border rounded-md py-4 px-4 relative h-[100%] m-auto w-44">
                   <span className="absolute left-0 px-1 bg-[#27cfc4e4] rounded-r text-white">

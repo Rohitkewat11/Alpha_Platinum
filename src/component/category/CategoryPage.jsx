@@ -16,7 +16,7 @@ export function CategoryPage() {
   useEffect(() => {
     axios
       .post(
-        "https://alpha-platinum.vercel.app/api/get_categories"
+        "https://alphasilver.productsalphawizz.com/app/v1/api/get_categories"
       )
       .then((res) => {
         setCategory(res.data.data);
